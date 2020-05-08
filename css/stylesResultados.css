@@ -1,0 +1,8 @@
+* {
+    font-family: Arial;
+}
+
+#contenedorResultados{
+    display: table;
+    margin: 0 auto;
+}

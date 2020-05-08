@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuesta de videojuegos</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div id=contenedorRegistro>
+        <h1>Encuesta videojuegos</h1>
+
+        <p><input type="text" placeholder="Nombre del videojuego" id="nombreVideojuego"></p>
+        <p><input type="text" placeholder="Estudio desarrollador" id="estudioVideojuego"></p>
+        <p><input type="number" placeholder="Año de estreno" id="estrenoVideojuego"></p>
+
+        <p><button id="registrarBtn">Registrar</button></p>
+        <p><a href="resultados.html"><button id="resultadosBtn">Ver resultados</button></p></a>
+    </div>
+
+    <div id="contenedorLista">
+        <h3>Lista de videojuegos</h3>
+        <ul id="listaJuegos"></ul>
+    </div>
+</body>
+<script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-database.js"></script>
+<script type="text/javascript" src="js/model/videojuego.js"></script>
+<script type="text/javascript" src="js/control/functions.js"></script>
+
+</html>
