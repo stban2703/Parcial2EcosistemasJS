@@ -27,11 +27,10 @@ function registrar() {
     let nombre = nombreVideojuego.value;
     let estudio = estudioVideojuego.value;
     let estreno = estrenoVideojuego.value;
-    let voto = 0;
 
     if (nombre != "" && estudio != "" && estreno != "") {
         let id = database.ref().child("videojuegos").push().key;
-        let videojuego = new Videojuego(id, nombre, estudio, estreno, voto);
+        let videojuego = new Videojuego(id, nombre, estudio, estreno);
         database.ref().child("videojuegos").child(id).set(videojuego);
     } else {
         alert("Completa todos los campos");

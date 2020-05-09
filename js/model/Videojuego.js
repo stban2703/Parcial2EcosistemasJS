@@ -1,9 +1,8 @@
 class Videojuego {
-    constructor(id, nombre, estudio, estreno, voto) {
+    constructor(id, nombre, estudio, estreno) {
         this.id = id;
         this.nombre = nombre;
         this.estudio = estudio;
         this.estreno = estreno;
-        this.voto = voto;
     }
 }
