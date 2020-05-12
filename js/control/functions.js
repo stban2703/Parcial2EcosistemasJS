@@ -12,6 +12,7 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 
+
 const nombreVideojuego = document.getElementById("nombreVideojuego");
 const estudioVideojuego = document.getElementById("estudioVideojuego");
 const estrenoVideojuego = document.getElementById("estrenoVideojuego");

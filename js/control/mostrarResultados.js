@@ -15,23 +15,23 @@ const listaResultados = document.getElementById("listaResultados");
 const database = firebase.database();
 const totalVotos = document.getElementById("totalVotos");
 
-let total;
+var ctx = document.getElementById('myChart').getContext('2d');
 
 // Leer lista de firebase
 database.ref().child("videojuegos").on("child_added", function (snapshot) {
     var vjObj = snapshot.val();
     var item = document.createElement("li");
-
+    
     database.ref().child("votos").on("value", function (snapshot) {
-        let total = snapshot.numChildren();
+        var total = snapshot.numChildren();
         totalVotos.innerHTML = "Total de votos: " + total;
-        
-        database.ref().child("videojuegos").child(vjObj.id).on("value", function (snapshot) {
-            let numVotos = snapshot.child("votos").numChildren();
-            let porcentaje = Math.round((numVotos / total) * 100);
+        //console.log(total)
+
+        database.ref().child("videojuegos").child(vjObj.id).child("votos").on("value", function (snapshot) {
+            var numVotos = snapshot.numChildren();
+            var porcentaje = Math.round((numVotos / total) * 100);
             item.innerHTML = vjObj.nombre + " (" + porcentaje + "%)";
         });
     });
-
     listaResultados.appendChild(item);
 });
