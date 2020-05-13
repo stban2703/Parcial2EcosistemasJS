@@ -16,30 +16,38 @@ const listaResultados = document.getElementById("listaResultados");
 const database = firebase.database();
 const totalVotos = document.getElementById("totalVotos");
 const ctx = document.getElementById('myChart').getContext('2d');
+const juegos = document.querySelectorAll(".juego");
+const votosxJuego = document.getElementsByClassName("votoJuego");
 
 var datosX = [];
 var datosY = [];
+var total;
+ 
+// Leer total de votos
+database.ref().child("votos").on("value", function (snapshot) {
+    total = snapshot.numChildren();
+    totalVotos.innerHTML = total;
+});
 
 // Leer lista de firebase
 database.ref().child("videojuegos").on("child_added", function (snapshot) {
     var vjObj = snapshot.val();
-    var item = document.createElement("li");
     var numVotos;
-    datosX.push(vjObj.nombre)
+    var item = document.createElement("li");
+    item.className = "juego";
+    var itemVot = document.createElement("span");
+    itemVot.className = "votoJuego";
+    console.log(datosX);
+    datosX.push(vjObj.nombre);
 
-    database.ref().child("votos").on("value", function (snapshot) {
-        var total = snapshot.numChildren();
-        totalVotos.innerHTML = "Total de votos: " + total;
-
-        database.ref().child("videojuegos").child(vjObj.id).child("votos").on("value", function (snapshot) {
-            numVotos = snapshot.numChildren();
-            var porcentaje = Math.round((numVotos / total) * 100);
-            var listaVotos = [];
-            item.innerHTML = vjObj.nombre + " (" + porcentaje + "%)";
-            datosY.push(porcentaje);
-            myChart.update();
-            console.log(datosY);
-        });
+    database.ref().child("videojuegos").child(vjObj.id).child("votos").on("value", function (snapshot) {
+        numVotos = snapshot.numChildren();
+        var porcentaje = Math.round((numVotos / totalVotos.innerHTML) * 100);
+        item.innerHTML = vjObj.nombre
+        itemVot.innerHTML = " (" + porcentaje + "%)";
+        item.appendChild(itemVot);
+        datosY.push(porcentaje);
+        myChart.update();
     });
     listaResultados.appendChild(item);
 });
@@ -50,7 +58,7 @@ const myChart = new Chart(ctx, {
     data: {
         labels: datosX,
         datasets: [{
-            label: 'Número de votos',
+            label: '% de voto: ',
             data: datosY,
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
@@ -93,13 +101,3 @@ const myChart = new Chart(ctx, {
         }
     }
 });
-
-function addData(chart, label, data) {
-    chart.data.labels.push(label);
-    chart.data.datasets.forEach((dataset) => {
-        dataset.data.push(data);
-    });
-    //datosX.shift();
-    //datosY.shift();
-    chart.update();
-}
