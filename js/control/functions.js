@@ -36,7 +36,6 @@ function registrar() {
     } else {
         alert("Completa todos los campos");
     }
-
 }
 
 // Leer lista de firebase
