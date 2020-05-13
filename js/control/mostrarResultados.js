@@ -34,6 +34,7 @@ database.ref().child("videojuegos").on("child_added", function (snapshot) {
         database.ref().child("videojuegos").child(vjObj.id).child("votos").on("value", function (snapshot) {
             numVotos = snapshot.numChildren();
             var porcentaje = Math.round((numVotos / total) * 100);
+            var listaVotos = [];
             item.innerHTML = vjObj.nombre + " (" + porcentaje + "%)";
             datosY.push(porcentaje);
             myChart.update();
