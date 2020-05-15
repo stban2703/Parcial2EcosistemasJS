@@ -16,49 +16,64 @@ const listaResultados = document.getElementById("listaResultados");
 const database = firebase.database();
 const totalVotos = document.getElementById("totalVotos");
 const ctx = document.getElementById('myChart').getContext('2d');
-const juegos = document.querySelectorAll(".juego");
-const votosxJuego = document.getElementsByClassName("votoJuego");
 
 var datosX = [];
 var datosY = [];
-var total;
- 
-// Leer total de votos
-database.ref().child("votos").on("value", function (snapshot) {
-    total = snapshot.numChildren();
-    totalVotos.innerHTML = total;
-});
 
-// Leer lista de firebase
+// Mostrar lista de juego registrados y porcentajes
 database.ref().child("videojuegos").on("child_added", function (snapshot) {
     var vjObj = snapshot.val();
-    var numVotos;
     var item = document.createElement("li");
-    item.className = "juego";
-    var itemVot = document.createElement("span");
-    itemVot.className = "votoJuego";
-    console.log(datosX);
-    datosX.push(vjObj.nombre);
+    item.className = "juegos";
 
-    database.ref().child("videojuegos").child(vjObj.id).child("votos").on("value", function (snapshot) {
-        numVotos = snapshot.numChildren();
-        var porcentaje = Math.round((numVotos / totalVotos.innerHTML) * 100);
-        item.innerHTML = vjObj.nombre
-        itemVot.innerHTML = " (" + porcentaje + "%)";
-        item.appendChild(itemVot);
-        datosY.push(porcentaje);
-        myChart.update();
+    database.ref().child("votos").on("value", function (snapshot) {
+        var total = snapshot.numChildren();
+        totalVotos.innerHTML = total;
+        console.log(total)
+
+        database.ref().child("videojuegos").child(vjObj.id).child("votos").on("value", function (snapshot) {
+            var numVotos = snapshot.numChildren();
+            var porcentaje = Math.round((numVotos / totalVotos.innerHTML) * 100);
+            item.innerHTML = vjObj.nombre + " (" + porcentaje + "%)";
+            myChart.update();
+        });
     });
+
     listaResultados.appendChild(item);
 });
 
-// Grafico
+
+
+// Agregar y actualizar datos del grafico
+database.ref().child("votos").on("value", function (snapshot) {
+    var total = snapshot.numChildren();;
+
+    database.ref().child("videojuegos").on("value", function (snapshot) {
+        var listaHtml = document.querySelectorAll(".juegos");
+        for (let i = 0; i < listaHtml.length; i++) {
+            //listaHtml[i].remove();
+            removeData(myChart);
+        }
+
+        snapshot.forEach(element => {
+            var vjObj = element.val();
+            var vjVot = Object.keys(vjObj.votos);
+            var nombre = vjObj.nombre;
+            var votos = Math.round(vjVot.length / total * 100);
+            addData(myChart, nombre, votos);
+        });
+
+    });
+});
+
+
+// Dibujar grafico
 const myChart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: datosX,
         datasets: [{
-            label: '% de voto: ',
+            label: '% de voto',
             data: datosY,
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
@@ -101,3 +116,21 @@ const myChart = new Chart(ctx, {
         }
     }
 });
+
+// Metodo de la libreria para agregar datos
+function addData(chart, label, data) {
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+    });
+    chart.update();
+}
+
+// Metodo de la libreria para quitar datos
+function removeData(chart) {
+    chart.data.labels.pop();
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.pop();
+    });
+    chart.update();
+}
